@@ -12,7 +12,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        return Product::get();
+        return view('index',['products' => Product::get()]);
     }
 
 
@@ -42,8 +42,57 @@ class ProductController extends Controller
 
           if ($products) {
               return redirect()->to('product');
+          }else{
+            return;
           }
+    }
 
+    public function edit(Request $request)
+    {
+       $validator = Validator::make($request->all(), [
+            'id' => 'bail|required',
+            'productName' => 'bail|required',
+            'priceHt' => 'bail|required',
+        ]);
+ 
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+          $products = Product::where('id',$request->id)
+                              ->update([
+                                    'name' => $request->productName,
+                                    'priceHt' => $request->priceHt,
+                                    'dateUpdate' =>  Carbon::now(),
+                              ]);
+          
+          if ($products) {
+              return redirect()->to('product');
+          }else{
+            return;
+          }
+    
+    }
+
+    public function delete(Request $request)
+    {
+       $validator = Validator::make($request->all(), [
+            'id' => 'bail|required',
+        ]);
+ 
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+          $products = Product::where('id',$request->id)
+                              ->delete();
+          
+          if ($products) {
+              return redirect()->to('product');
+          }else{
+            return;
+          }
+    
     }
 
 

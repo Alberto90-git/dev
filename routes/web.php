@@ -30,5 +30,8 @@ Route::get('/product/new', [ProductController::class, 'new'])->name('product/new
 
 Route::post('/product/store', [ProductController::class, 'store'])->name('store');
 
+//Modification
+Route::post('/product/edit', [ProductController::class, 'edit'])->name('edit');
+
 
 
