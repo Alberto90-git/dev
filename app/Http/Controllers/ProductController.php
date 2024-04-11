@@ -7,6 +7,8 @@ use App\Models\Product;
 use Carbon\Carbon;
 use App\Http\Requests\productRequest;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\QueryException;  
+
 
 class ProductController extends Controller
 {
@@ -23,80 +25,97 @@ class ProductController extends Controller
 
     public function store(Request $request){
 
-        $validator = Validator::make($request->all(), [
-            'productName' => 'bail|required',
-            'priceHt' => 'bail|required',
-        ]);
- 
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
+        try {
 
-          $products = Product::create([
-                    'name' => $request->productName,
-                    'priceHt' => $request->priceHt,
-                    'creationDate' =>  Carbon::now(),
-          ]);
+            $validator = Validator::make($request->all(), [
+                'productName' => 'bail|required',
+                'priceHt' => 'bail|required',
+               ]);
+ 
+            if ($validator->fails()) {
+                return back()->withErrors($validator)->withInput();
+            }
+
+            $products = Product::create([
+                        'name' => $request->productName,
+                        'priceHt' => $request->priceHt,
+                        'creationDate' =>  Carbon::now(),
+            ]);
           
 
 
-          if ($products) {
-              return redirect()->to('product');
-          }else{
-            return;
-          }
+              if ($products) {
+                  return redirect()->to('product');
+              }else{
+                return;
+              }
+        } catch (QueryException $e) {
+            return redirect()->route('product')->with('success', 'Erreur, il y a un souci.');
+        }
     }
 
     public function edit(Request $request)
     {
-       $validator = Validator::make($request->all(), [
-            'id' => 'bail|required',
-            'productName' => 'bail|required',
-            'priceHt' => 'bail|required',
-        ]);
+       try {
+           
+            $validator = Validator::make($request->all(), [
+                'id' => 'bail|required',
+                'productName' => 'bail|required',
+                'priceHt' => 'bail|required',
+           ]);
  
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
+            if ($validator->fails()) {
+                return back()->withErrors($validator)->withInput();
+            }
 
-          $products = Product::where('id',$request->id)
+            $products = Product::where('id',$request->id)
                               ->update([
                                     'name' => $request->productName,
                                     'priceHt' => $request->priceHt,
                                     'dateUpdate' =>  Carbon::now(),
                               ]);
           
-          if ($products) {
-              return redirect()->to('product');
-          }else{
-            return;
-          }
+              if ($products) {
+                  return redirect()->route('product')->with('success', 'Product modifié avec succès.');
+              }else{
+                return;
+              }
+
+       } catch (QueryException $e) {
+            return redirect()->route('product')->with('success', 'Erreur, il y a un souci.');
+            
+       }
     
     }
 
     public function delete(Request $request)
     {
-       $validator = Validator::make($request->all(), [
-            'id' => 'bail|required',
-        ]);
+       try {
+           
+           $validator = Validator::make($request->all(), [
+            'delete_id' => 'bail|required',
+           ]);
  
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
+            if ($validator->fails()) {
+                return back()->withErrors($validator)->withInput();
+            }
 
-          $products = Product::where('id',$request->id)
+            $products = Product::where('id',$request->delete_id)
                               ->delete();
           
-          if ($products) {
-              return redirect()->to('product');
-          }else{
-            return;
-          }
+            if ($products) {
+                return redirect()->route('product')->with('success', 'Product supprimé avec succès.');
+
+            }else{
+                return;
+            }
+
+       } catch (QueryException $e) {
+            return redirect()->route('product')->with('success', 'Erreur, il y a un souci.');
+           
+       }
     
     }
-
-
-
 
 
 }

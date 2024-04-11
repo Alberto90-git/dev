@@ -23,15 +23,18 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 //Recuperer tous les produits
-Route::get('/product', [ProductController::class, 'index']);
+Route::get('/product', [ProductController::class, 'index'])->name('product');
 
 
-Route::get('/product/new', [ProductController::class, 'new'])->name('product/new');
+Route::prefix('product')->group(function () {
 
-Route::post('/product/store', [ProductController::class, 'store'])->name('store');
+  Route::get('/new', [ProductController::class, 'new'])->name('productNew');
 
-//Modification
-Route::post('/product/edit', [ProductController::class, 'edit'])->name('edit');
+  Route::post('/store', [ProductController::class, 'store'])->name('store');
 
+  //Modification
+  Route::post('/edit', [ProductController::class, 'edit'])->name('edit');
+  //Deleting
+  Route::post('/delete', [ProductController::class, 'delete'])->name('delete');
 
-
+});
