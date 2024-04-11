@@ -23,4 +23,12 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 //Recuperer tous les produits
-Route::get('/product', [ProductController::class, 'index'])->name('product');
+Route::get('/product', [ProductController::class, 'index']);
+
+
+Route::get('/product/new', [ProductController::class, 'new'])->name('product/new');
+
+Route::post('/product/store', [ProductController::class, 'store'])->name('store');
+
+
+
